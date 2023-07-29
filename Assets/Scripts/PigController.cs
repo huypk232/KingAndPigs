@@ -6,26 +6,34 @@ public class PigController : MonoBehaviour
 {
     public Transform attackPoint;
     public LayerMask kingLayer;
+    public Transform[] waypoints;
 
     private bool isCollidePlayer;
     private float deltaTimeCollidePlayer = 2f;
     private float attackRange = 0.5f;
+    private float patrolRange = 2f;
     private Rigidbody2D _rb;
     private Animator _animator;
     private int hp;
     private static int maxHp = 2;
-    
+    private Transform destination;
+    private int m_CurrentWaypointIndex;
+    private float freeze = 3f;
 
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();        
         _animator = GetComponent<Animator>(); 
         hp = maxHp;
+        m_CurrentWaypointIndex = 0;
+        destination = waypoints[0];
     }
 
     void Update()
     {
         CheckInAttackRange();
+        CheckInPatrolRange();
+        Patrol();
     }
 
     private void ManualOnCollisionStay()
@@ -62,10 +70,26 @@ public class PigController : MonoBehaviour
             {
                 enemy.GetComponent<KingController>().TakeDamage();
             }
+            deltaTimeCollidePlayer = 2f;
         }
     }
 
+    private void CheckInPatrolRange()
+    {
+        // realize player position
+    }
 
+    private void Patrol()
+    {
+        
+        if (transform.position == destination.position) {
+            m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
+            destination = waypoints[m_CurrentWaypointIndex];
+            freeze = 3f;
+        }
+        transform.position = Vector2.MoveTowards(transform.position, destination.position, 2f * Time.deltaTime);
+
+    }
 
     private void OnCollisionEnter2D(Collision2D other) {
         // if(other.gameObject.CompareTag("Player"))
@@ -95,6 +119,7 @@ public class PigController : MonoBehaviour
     public void TakeDamage()
     {
         hp -= 1;
+        _animator.SetTrigger("Hitted");
         if(hp <= 0)
         {
             _animator.SetTrigger("Dead");

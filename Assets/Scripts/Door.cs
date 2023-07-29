@@ -8,8 +8,10 @@ public class Door : MonoBehaviour
 
     public GameObject destination;
     public GameObject currentRoom;
-    
+    public GameObject kingPig;
+
     [SerializeField] bool lastDoor;
+    
 
     void Start()
     {

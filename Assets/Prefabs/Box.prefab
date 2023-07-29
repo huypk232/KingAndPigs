@@ -5061,3 +5061,4 @@ MonoBehaviour:
   diamondPrefab: {fileID: 2170682258030955837, guid: 66981c8a4924b4d4597974d32866474a, type: 3}
   jadePrefab: {fileID: 6759903226925167322, guid: 154026e5101afec40ac47a76fe04b610, type: 3}
   bombPrefab: {fileID: 5653883900448745226, guid: 66c1cc174961ac940b5fe4892d9bd52a, type: 3}
+  lifePrefab: {fileID: 9210904265285475879, guid: 43f2b013993bb03429859b3df83788d2, type: 3}

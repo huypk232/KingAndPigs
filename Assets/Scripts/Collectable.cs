@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-
     private void OnCollisionEnter2D(Collision2D other) {
         if(other.gameObject.CompareTag("Player"))
         {
-            GameManager.instance.ColectDiamond();
+            if(gameObject.CompareTag("Diamond") || gameObject.CompareTag("Jade"))
+            {
+                GameManager.instance.ColectDiamond();
+            } else if(gameObject.CompareTag("Life"))
+            {
+                if(other.gameObject.TryGetComponent<KingController>(out KingController king))
+                {
+                    king.Heal();
+                }
+            }
             Destroy(gameObject);
         }
     }
