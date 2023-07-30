@@ -7,13 +7,13 @@ public class KingController : MonoBehaviour
     public Transform attackPoint;
     public LayerMask enemyLayer;
     public LayerMask boxLayer;
-    public GameObject healthBar;
     public GameObject life;
 
     [SerializeField] float speed = 4f;
     [SerializeField] float _jumpForce = 5f;
     [SerializeField] bool inFirstRoom = false;
 
+    private static GameObject healthBar;
     private float lastVerticalVelocity = 0f;
     private bool falling = false;
     private bool changingRoom = false;
@@ -38,7 +38,8 @@ public class KingController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         groundSensor = transform.Find("Ground Sensor").GetComponent<GroundSensor>();
         _hp = _maxHp;
-        
+        healthBar = GameObject.Find("/Canvas/Health Bar");
+        attackPoint = transform.Find("Attack Point").transform;
         int index = 0;
         foreach (Transform lifePos in healthBar.transform)
         {
@@ -175,10 +176,10 @@ public class KingController : MonoBehaviour
 
     public void TakeDamage()
     {
-        _hp -= 1;
         _animator.SetTrigger("Hitted");
-        int currentLifeCanvasCount = healthBar.transform.childCount;
-        Destroy(healthBar.transform.GetChild(currentLifeCanvasCount - 1).gameObject);
+        healthBar.transform.GetChild(_hp - 1).gameObject.SetActive(false);
+        _hp -= 1;
+
         if (_hp <= 0)
         {
             _animator.SetTrigger("Dead");
@@ -189,17 +190,20 @@ public class KingController : MonoBehaviour
     public void Heal()
     {
         if(_hp >= 3){
-            Debug.Log("full life");
             return;
         }
-        int currentLifeCanvasCount = healthBar.transform.childCount;
-        Debug.Log(currentLifeCanvasCount);
-        Instantiate(life, lifeCanvasPos[currentLifeCanvasCount], Quaternion.identity, healthBar.transform);
+        healthBar.transform.GetChild(_hp).gameObject.SetActive(true);
+        _hp += 1;
     }
 
     public void Respawn()
     {
         _hp = _maxHp;
+        Debug.Log(_hp);
+        foreach(Transform transform in healthBar.transform)
+        {
+            transform.gameObject.SetActive(true);
+        }
         _animator.SetTrigger("Respawn");
     }
 

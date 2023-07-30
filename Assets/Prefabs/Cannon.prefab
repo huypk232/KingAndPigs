@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6544775269205597022}
   - component: {fileID: 3917320233848728080}
   m_Layer: 0
-  m_Name: Idle
+  m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

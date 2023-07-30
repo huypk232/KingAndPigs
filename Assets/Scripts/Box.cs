@@ -35,19 +35,19 @@ public class Box : MonoBehaviour
         // refactor
         if(dropIndex == 0)
         {
-            GameObject newDiamond = Instantiate(diamondPrefab, transform.position, Quaternion.identity);
+            GameObject newDiamond = Instantiate(diamondPrefab, transform.position, Quaternion.identity, transform.parent);
             newDiamond.GetComponent<Rigidbody2D>().velocity = randomVelocity;
         } else if (dropIndex == 1)
         {
-            GameObject newJade = Instantiate(jadePrefab, transform.position, Quaternion.identity);
+            GameObject newJade = Instantiate(jadePrefab, transform.position, Quaternion.identity, transform.parent);
             newJade.GetComponent<Rigidbody2D>().velocity = randomVelocity;
         } else if (dropIndex == 2)
         {
-            GameObject newBomb = Instantiate(bombPrefab, transform.position, Quaternion.identity);
+            GameObject newBomb = Instantiate(bombPrefab, transform.position, Quaternion.identity, transform.parent);
             newBomb.GetComponent<Rigidbody2D>().velocity = randomVelocity;
         } else if (dropIndex == 3)
         {
-            GameObject newLife = Instantiate(lifePrefab, transform.position, Quaternion.identity);
+            GameObject newLife = Instantiate(lifePrefab, transform.position, Quaternion.identity, transform.parent);
             newLife.GetComponent<Rigidbody2D>().velocity = randomVelocity;
         }
     }

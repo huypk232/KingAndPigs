@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,17 +7,21 @@ using UnityEngine.SceneManagement;
 
 public class LevelSelector : MonoBehaviour
 {
-    // public SceneFader fader;
-
     public static int selectedLevel;
     public int level;
-    // public Text levelText;
-
-    private void Start() {
-        // levelText.text = level.ToString();    
-    }
 
     public void OpenScene() {
-        SceneManager.LoadScene("Level " + level.ToString());
+        try
+        {
+            SceneManager.LoadScene("Level " + level.ToString());
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+        finally
+        {
+            GameManager.instance.OnComingStageNotice();
+        }
     }
 }

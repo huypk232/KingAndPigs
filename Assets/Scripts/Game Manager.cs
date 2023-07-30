@@ -8,41 +8,32 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    // public Door door; // target
-
-    // public GameObject levels;
     public GameObject stageCompleteCanvas;
     public GameObject pauseCanvas;
     public GameObject gameOverCanvas;
-    // public GameObject healthBar;
+    public GameObject onComingStageCanvas;
     public GameObject diamondCounter;
 
-    private static float diamonds = 10;
-    private static float jades = 0;
+    private static float diamonds = 10f;
+    private static float jades;
 
     private void Awake() {
-        if(instance != null)
+        if(instance == null)
         {
-            
-            Destroy(gameObject);
-            return;
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        } else if (instance != this)
+        {
+            Destroy(instance.gameObject);
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        instance = this;
-        DontDestroyOnLoad(gameObject);
+        
     }
 
-    // Start is called before the first frame update
-    // void Start()
-    // {
-    //     instance = this;
-    //     // diamonds = 0;
-    //     // jades = 0;
-    // }
-
-    // Update is called once per frame
     void Update()
     {
-        Pause();
+        Pause(); // todo refactor
     }
 
     void Pause()
@@ -70,6 +61,8 @@ public class GameManager : MonoBehaviour
         if(diamonds >= 10)
         {
             // respawn king
+            FindObjectOfType<KingController>().Respawn();
+            
             diamonds -= 10;
             diamondCounter.GetComponent<TextMeshProUGUI>().SetText(diamonds.ToString());
             Time.timeScale = 1;
@@ -118,7 +111,11 @@ public class GameManager : MonoBehaviour
         targetRoom.SetActive(true);
     }
 
-
+    public void OnComingStageNotice()
+    {
+        stageCompleteCanvas.SetActive(false);
+        onComingStageCanvas.SetActive(true);
+    }
 
     private IEnumerator WaitGoThroughRoom()
     {

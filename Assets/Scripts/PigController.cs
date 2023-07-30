@@ -19,6 +19,8 @@ public class PigController : MonoBehaviour
     private Transform destination;
     private int m_CurrentWaypointIndex;
     private float freeze = 3f;
+    private bool freezing = false;
+    private bool isCombat = false;
 
     void Awake()
     {
@@ -52,23 +54,26 @@ public class PigController : MonoBehaviour
     private void CheckInAttackRange()
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, kingLayer);
-    
+
         if(hitEnemies.Length == 0)
         {
+            isCombat = false;
             isCollidePlayer = false;
             deltaTimeCollidePlayer = 2f;
             return;
         }
 
         isCollidePlayer = true;
-        
+        isCombat = true;
         deltaTimeCollidePlayer -= Time.deltaTime;
         if(deltaTimeCollidePlayer <= 0)
         {
             _animator.SetTrigger("Attack");
             foreach(Collider2D enemy in hitEnemies)
             {
-                enemy.GetComponent<KingController>().TakeDamage();
+                if(enemy.TryGetComponent<KingController>(out KingController king)){
+                    king.TakeDamage();
+                }
             }
             deltaTimeCollidePlayer = 2f;
         }
@@ -81,14 +86,41 @@ public class PigController : MonoBehaviour
 
     private void Patrol()
     {
-        
+        if(isCombat)
+        {
+            return;
+        }
         if (transform.position == destination.position) {
+            freezing = true;
             m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
             destination = waypoints[m_CurrentWaypointIndex];
             freeze = 3f;
         }
-        transform.position = Vector2.MoveTowards(transform.position, destination.position, 2f * Time.deltaTime);
+        if (freezing)
+        {
+            freeze -= Time.deltaTime;
+            _animator.SetFloat("Speed", 0f);
+            // return;
+        }
+        if (freeze <= 0)
+        {
+            freezing = true;
+            m_CurrentWaypointIndex = (m_CurrentWaypointIndex +   1) % waypoints.Length;
+            destination = waypoints[m_CurrentWaypointIndex];
+            freeze = 3f;
+        }
+        transform.position = Vector2.MoveTowards(transform.position, destination.position, 1f * Time.deltaTime);
+        _animator.SetFloat("Speed", 1f);
+        Vector3 direction = destination.position - transform.position;
+        if (direction.x < 0)
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f)); // todo sync with king movement function
 
+        } else if(direction.x > 0)
+        {
+
+            transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
