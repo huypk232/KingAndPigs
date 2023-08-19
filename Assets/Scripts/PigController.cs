@@ -21,6 +21,7 @@ public class PigController : MonoBehaviour
     private float freeze = 3f;
     private bool freezing = false;
     private bool isCombat = false;
+    private bool _died = false;
 
     void Awake()
     {
@@ -33,6 +34,7 @@ public class PigController : MonoBehaviour
 
     void Update()
     {
+        if(_died) return;
         CheckInAttackRange();
         CheckInPatrolRange();
         Patrol();
@@ -151,10 +153,13 @@ public class PigController : MonoBehaviour
     public void TakeDamage()
     {
         hp -= 1;
-        _animator.SetTrigger("Hitted");
+        if(!_died) {
+            _animator.SetTrigger("Hitted");
+        }
         if(hp <= 0)
         {
             _animator.SetTrigger("Dead");
+            _died = true;
             Destroy(gameObject, 2f);
         }
     }

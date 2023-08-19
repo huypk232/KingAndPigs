@@ -14,8 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject onComingStageCanvas;
     public GameObject diamondCounter;
 
-    private static float diamonds = 10f;
-    private static float jades;
+    private static int diamonds = 10;
 
     private void Awake() {
         if(instance == null)
@@ -28,7 +27,7 @@ public class GameManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        
+        diamondCounter.GetComponent<TextMeshProUGUI>().SetText(diamonds.ToString());        
     }
 
     void Update()
@@ -76,11 +75,6 @@ public class GameManager : MonoBehaviour
     {
         diamonds += 1;
         diamondCounter.GetComponent<TextMeshProUGUI>().SetText(diamonds.ToString());
-    }
-
-    public void ColectJade()
-    {
-        jades += 1;
     }
 
     public void CompleteStage()
