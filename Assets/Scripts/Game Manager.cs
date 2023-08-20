@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
         diamondCounter.GetComponent<TextMeshProUGUI>().SetText(diamonds.ToString());        
+        Time.timeScale = 1;
     }
 
     void Update()

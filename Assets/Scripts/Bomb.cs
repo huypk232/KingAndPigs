@@ -4,30 +4,42 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
+    [SerializeField] private LayerMask kingLayer;
     private float explodeRange = 1f;
     private Animator _animator;
-    // private Rigidbody2D _rb;
+    private float _timer = 2f;
+    private bool _exploded = false;
 
     void Awake()
     {
         _animator = GetComponent<Animator>();
-        // _rb = GetComponent<Rigidbody2D>();
-        
+        _animator.Play("BombOn");
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E))
+        if(_timer <= 0f)
         {
-            Explode();
+            if(!_exploded) {
+                Explode();
+                _exploded = true;
+            }
+        } else {
+            _timer -= Time.deltaTime;
         }
     }
 
     private void Explode()
     {
         _animator.SetTrigger("Explode");
-        Destroy(gameObject, 1f);
+        Destroy(gameObject, 0.25f);
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, explodeRange, kingLayer);
+        foreach(Collider2D enemy in hitEnemies)
+        {
+            if(enemy.TryGetComponent<KingController>(out KingController king)){
+                king.TakeDamage();
+            }
+        }
     }
 
     void OnDrawGizmosSelected()

@@ -11,16 +11,11 @@ public class LevelSelector : MonoBehaviour
     public int level;
 
     public void OpenScene() {
-        try
-        {
+        if (level == -1) {
+            Application.Quit();
+        } else if (SceneUtility.GetBuildIndexByScenePath("Assets/Scenes/Level " + level.ToString() + ".unity") >= 0) {
             SceneManager.LoadScene("Level " + level.ToString());
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-        }
-        finally
-        {
+        } else {
             GameManager.instance.OnComingStageNotice();
         }
     }
