@@ -11,6 +11,7 @@ public class Door : MonoBehaviour
     public GameObject kingPig;
 
     [SerializeField] bool lastDoor;
+    [SerializeField] GameObject linkedDoor;
     
 
     void Start()

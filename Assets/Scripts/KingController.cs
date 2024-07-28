@@ -26,7 +26,7 @@ public class KingController : MonoBehaviour
     private static int _hp;
     private int _maxHp = 3;
     private float attackRange = 1f;
-    private bool _inDoorTrigger = false;
+    private bool _inDoorTrigger;
     private Door _door;
 
     private static Vector3[] lifeCanvasPos = new Vector3[3];
@@ -199,7 +199,6 @@ public class KingController : MonoBehaviour
     public void Respawn()
     {
         _hp = _maxHp;
-        Debug.Log(_hp);
         foreach(Transform transform in healthBar.transform)
         {
             transform.gameObject.SetActive(true);
@@ -225,7 +224,7 @@ public class KingController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.TryGetComponent<Door>(out Door door))
+        if(other.gameObject.TryGetComponent(out Door door))
         {
             _inDoorTrigger = true;
             _door = door;
@@ -233,6 +232,14 @@ public class KingController : MonoBehaviour
         }
     }
 
+    private IEnumerator GoIn2(GameObject currentRoom, GameObject destination)
+    {
+        changingRoom = true;
+        yield return new WaitForSeconds(0.5f);
+        changingRoom = false;
+        GameManager.instance.GoToRoom(currentRoom, destination);
+    }
+    
     private IEnumerator GoIn(GameObject currentRoom, GameObject destination)
     {
         changingRoom = true;
