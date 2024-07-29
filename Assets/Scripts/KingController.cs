@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class KingController : MonoBehaviour
 {
@@ -9,11 +10,11 @@ public class KingController : MonoBehaviour
     public LayerMask boxLayer;
     public GameObject life;
 
-    [SerializeField] float speed = 4f;
-    [SerializeField] float _jumpForce = 5f;
+    [SerializeField] float speed;
+    [SerializeField] float jumpForce;
     [SerializeField] bool inFirstRoom = false;
 
-    private static GameObject healthBar;
+    private static GameObject _healthBar;
     private float lastVerticalVelocity = 0f;
     private bool falling = false;
     private bool changingRoom = false;
@@ -38,10 +39,10 @@ public class KingController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         groundSensor = transform.Find("Ground Sensor").GetComponent<GroundSensor>();
         _hp = _maxHp;
-        healthBar = GameObject.Find("/Canvas/Health Bar");
+        _healthBar = GameObject.Find("/Canvas/Health Bar");
         attackPoint = transform.Find("Attack Point").transform;
         int index = 0;
-        foreach (Transform lifePos in healthBar.transform)
+        foreach (Transform lifePos in _healthBar.transform)
         {
             lifeCanvasPos[index] = new Vector3(lifePos.position.x, lifePos.position.y, lifePos.position.z);
             index += 1;
@@ -85,6 +86,8 @@ public class KingController : MonoBehaviour
             } else {
                 _animator.SetTrigger("GoIn");
                 StartCoroutine(GoIn(_door.currentRoom, _door.destination));
+                _animator.SetTrigger("GoOut");
+                StartCoroutine(GoIn(_door.currentRoom, _door.destination));
             }
         }
     }
@@ -114,7 +117,7 @@ public class KingController : MonoBehaviour
             _animator.SetTrigger("Jump");
             _isGround = false;
             _animator.SetBool("IsGround", _isGround);
-            _rb.velocity = new Vector2(_rb.velocity.x, _jumpForce);
+            _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
             groundSensor.Disable(0.2f);
         }
         
@@ -177,7 +180,7 @@ public class KingController : MonoBehaviour
     public void TakeDamage()
     {
         _animator.SetTrigger("Hitted");
-        healthBar.transform.GetChild(_hp - 1).gameObject.SetActive(false);
+        _healthBar.transform.GetChild(_hp - 1).gameObject.SetActive(false);
         _hp -= 1;
 
         if (_hp <= 0)
@@ -192,14 +195,14 @@ public class KingController : MonoBehaviour
         if(_hp >= 3){
             return;
         }
-        healthBar.transform.GetChild(_hp).gameObject.SetActive(true);
+        _healthBar.transform.GetChild(_hp).gameObject.SetActive(true);
         _hp += 1;
     }
 
     public void Respawn()
     {
         _hp = _maxHp;
-        foreach(Transform transform in healthBar.transform)
+        foreach(Transform transform in _healthBar.transform)
         {
             transform.gameObject.SetActive(true);
         }
@@ -244,8 +247,9 @@ public class KingController : MonoBehaviour
     {
         changingRoom = true;
         yield return new WaitForSeconds(0.5f);
+        transform.position = _door.linkedDoor.transform.position;
         changingRoom = false;
-        GameManager.instance.GoToRoom(currentRoom, destination);
+        // GameManager.instance.GoToRoom(currentRoom, destination);
     }
 
     private IEnumerator GoOut()
