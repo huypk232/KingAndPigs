@@ -12,7 +12,7 @@ public class Collectable : MonoBehaviour
                 GameManager.instance.ColectDiamond();
             } else if(gameObject.CompareTag("Life"))
             {
-                if(other.gameObject.TryGetComponent<KingController>(out KingController king))
+                if(other.gameObject.TryGetComponent<King>(out King king))
                 {
                     king.Heal();
                 }

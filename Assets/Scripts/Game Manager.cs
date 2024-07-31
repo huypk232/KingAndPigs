@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
         if(diamonds >= 10)
         {
             // respawn king
-            FindObjectOfType<KingController>().Respawn();
+            FindObjectOfType<King>().Respawn();
             
             diamonds -= 10;
             diamondCounter.GetComponent<TextMeshProUGUI>().SetText(diamonds.ToString());

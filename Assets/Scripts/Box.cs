@@ -54,7 +54,7 @@ public class Box : MonoBehaviour
     
     private void OnCollisionEnter2D(Collision2D other)
     {
-        // if(other.collider.gameObject.GetComponent<KingController>() && other.contacts[0].normal.y > 0.5f)
+        // if(other.collider.gameObject.GetComponent<King>() && other.contacts[0].normal.y > 0.5f)
         // {
         //     StartCoroutine(Break());
         // }

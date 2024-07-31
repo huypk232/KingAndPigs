@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class KingController : MonoBehaviour
+public class King : MonoBehaviour
 {
     public Transform attackPoint;
     public LayerMask enemyLayer;
@@ -20,23 +20,23 @@ public class KingController : MonoBehaviour
     private bool changingRoom = false;
     private bool _isGround = false;
 
-    private Animator _animator;
-    private Rigidbody2D _rb;
-    private GroundSensor groundSensor;
-
-    private static int _hp;
-    private int _maxHp = 3;
-    private float attackRange = 1f;
-    private bool _inDoorTrigger;
-    private Door _door;
+    [SerializeField] private Animator animator;
+    [SerializeField] private CharacterController characterController;
+    [SerializeField] private GroundSensor groundSensor;
+    
+    
+    [SerializeField] private int _hp;
+    [SerializeField] private int _maxHp = 3;
+    [SerializeField] private float attackRange = 1f;
+    [SerializeField] private bool _inDoorTrigger;
+    [SerializeField] private Door _door;
 
     private static Vector3[] lifeCanvasPos = new Vector3[3];
 
 
     void Awake()
     {
-        _animator = GetComponent<Animator>();
-        _rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         groundSensor = transform.Find("Ground Sensor").GetComponent<GroundSensor>();
         _hp = _maxHp;
         _healthBar = GameObject.Find("/Canvas/Health Bar");
@@ -66,12 +66,12 @@ public class KingController : MonoBehaviour
     {
         if (!_isGround && groundSensor.State()) {
             _isGround = true;
-            _animator.SetBool("IsGround", _isGround);
+            animator.SetBool("IsGround", _isGround);
         }
 
         if(_isGround && !groundSensor.State()) {
             _isGround = false;
-            _animator.SetBool("IsGround", _isGround);
+            animator.SetBool("IsGround", _isGround);
         }
     }
 
@@ -84,9 +84,9 @@ public class KingController : MonoBehaviour
             {
                 GameManager.instance.CompleteStage();
             } else {
-                _animator.SetTrigger("GoIn");
+                animator.SetTrigger("GoIn");
                 StartCoroutine(GoIn(_door.currentRoom, _door.destination));
-                _animator.SetTrigger("GoOut");
+                animator.SetTrigger("GoOut");
                 StartCoroutine(GoIn(_door.currentRoom, _door.destination));
             }
         }
@@ -105,19 +105,20 @@ public class KingController : MonoBehaviour
 
             transform.rotation = Quaternion.Euler(new Vector3(0f, 0, 0f));
         }
-        _animator.SetFloat("Speed", Mathf.Abs(horizontal));
-        _rb.velocity = new Vector2(horizontal * speed, _rb.velocity.y);
+        animator.SetFloat("Speed", Mathf.Abs(horizontal));
+        characterController.Move(new Vector3(horizontal * speed, characterController.velocity.y, 0));
     }
 
     private void Jump()
     {
-        _animator.SetFloat("VerticalVelocity", _rb.velocity.y);
+        animator.SetFloat("VerticalVelocity", characterController.velocity.y);
         if(Input.GetKeyDown(KeyCode.Space) && _isGround)
         {
-            _animator.SetTrigger("Jump");
+            animator.SetTrigger("Jump");
             _isGround = false;
-            _animator.SetBool("IsGround", _isGround);
-            _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
+            animator.SetBool("IsGround", _isGround);
+            characterController.Move(new Vector3(characterController.velocity.x, jumpForce, 0));
+            // _rb.velocity = new Vector2(_rb.velocity.x, jumpForce);
             groundSensor.Disable(0.2f);
         }
         
@@ -161,7 +162,7 @@ public class KingController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Return))
         {
-            _animator.SetTrigger("Attack");
+            animator.SetTrigger("Attack");
 
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayer);
             foreach(Collider2D enemy in hitEnemies)
@@ -179,13 +180,13 @@ public class KingController : MonoBehaviour
 
     public void TakeDamage()
     {
-        _animator.SetTrigger("Hitted");
+        animator.SetTrigger("Hitted");
         _healthBar.transform.GetChild(_hp - 1).gameObject.SetActive(false);
         _hp -= 1;
 
         if (_hp <= 0)
         {
-            _animator.SetTrigger("Dead");
+            animator.SetTrigger("Dead");
             GameManager.instance.GameOver();
         }
     }
@@ -206,18 +207,18 @@ public class KingController : MonoBehaviour
         {
             transform.gameObject.SetActive(true);
         }
-        _animator.SetTrigger("Respawn");
+        animator.SetTrigger("Respawn");
     }
 
     private void OnEnable() {
-        if(!_isGround && _rb.velocity.y == 0)
+        if(!_isGround && characterController.velocity.y == 0)
         {
             _isGround = true;
-            _animator.SetBool("IsGround", true);
+            animator.SetBool("IsGround", true);
         }  
         if(!inFirstRoom)
         {
-            _animator.SetTrigger("GoOut");
+            animator.SetTrigger("GoOut");
             StartCoroutine(GoOut());
         } else 
         {

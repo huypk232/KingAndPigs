@@ -36,7 +36,7 @@ public class Bomb : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, explodeRange, kingLayer);
         foreach(Collider2D enemy in hitEnemies)
         {
-            if(enemy.TryGetComponent<KingController>(out KingController king)){
+            if(enemy.TryGetComponent<King>(out King king)){
                 king.TakeDamage();
             }
         }

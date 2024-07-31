@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] private KingController player;
+    [SerializeField] private King player;
     [SerializeField] private Bounds _bounds;
     
     // Start is called before the first frame update

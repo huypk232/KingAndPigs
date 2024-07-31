@@ -73,7 +73,7 @@ public class PigController : MonoBehaviour
             _animator.SetTrigger("Attack");
             foreach(Collider2D enemy in hitEnemies)
             {
-                if(enemy.TryGetComponent<KingController>(out KingController king)){
+                if(enemy.TryGetComponent<King>(out King king)){
                     king.TakeDamage();
                 }
             }
